@@ -10,22 +10,22 @@ func RenderHanoiGame(game HanoiGame) {
 	padding := strings.Repeat(" ", TOWER_PADDING)
 
 	for y := range TOWER_HEIGHT {
-		line := ""
+		line := new(strings.Builder)
 		for _, tower := range game.Towers {
-			line += getTowerTextAtHeight(*tower, y) + padding
+			line.WriteString(getTowerTextAtY(*tower, y))
+			line.WriteString(padding)
 		}
 
-		fmt.Println(line)
+		fmt.Println(line.String())
 	}
 }
 
-func getTowerTextAtHeight(tower Tower, height int) string {
-	if height > len(tower.Discs) {
+func getTowerTextAtY(tower Tower, y int) string {
+	if y >= len(tower.Discs) {
 		return ""
 	}
 
-	disc := tower.Discs[height]
-
+	disc := tower.Discs[y]
 	return getDiscText(disc)
 }
 
@@ -35,15 +35,5 @@ func getDiscText(disc Disc) string {
 
 	padding := strings.Repeat(" ", (maxWidth - width)/2)
 	text := padding + strings.Repeat("■", width) + padding
-
-	switch disc.Color {
-	case ColorRed:
-		return "\033[31m" + text + "\033[0m"
-	case ColorGreen:
-		return "\033[32m" + text + "\033[0m"
-	case ColorYellow:
-		return "\033[33m" + text + "\033[0m"
-	default:
-		return text
-	}
+	return text
 }
