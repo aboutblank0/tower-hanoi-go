@@ -1,7 +1,10 @@
 package main
 
-import "fmt"
+import (
+	"aboutblank0/hanoi/hanoi"
+)
 
 func main() {
-	fmt.Println("Hello World")
+	game := hanoi.NewGame()
+	hanoi.RenderHanoiGame(*game)
 }
