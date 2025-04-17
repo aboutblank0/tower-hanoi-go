@@ -5,17 +5,28 @@ import (
 	"strings"
 )
 
+const TOWER_PADDING = 2
 func RenderHanoiGame(game HanoiGame) {
-	for _, tower := range game.Towers {
-		renderTower(*tower)
-		fmt.Println("=== TOWER ===")
+	padding := strings.Repeat(" ", TOWER_PADDING)
+
+	for y := range TOWER_HEIGHT {
+		line := ""
+		for _, tower := range game.Towers {
+			line += getTowerTextAtHeight(*tower, y) + padding
+		}
+
+		fmt.Println(line)
 	}
 }
 
-func renderTower(tower Tower) {
-	for _, disc := range tower.Discs {
-		fmt.Println(getDiscText(disc))
+func getTowerTextAtHeight(tower Tower, height int) string {
+	if height > len(tower.Discs) {
+		return ""
 	}
+
+	disc := tower.Discs[height]
+
+	return getDiscText(disc)
 }
 
 func getDiscText(disc Disc) string {
