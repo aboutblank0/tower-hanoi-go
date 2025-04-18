@@ -7,25 +7,22 @@ import (
 func TestQueue(t *testing.T) {	
 	queue := NewQueue[int]()
 
-	val1 := 1
-	val2 := 2
-	queue.Enqueue(&val1)
-	queue.Enqueue(&val2)
+	queue.Enqueue(1)
+	queue.Enqueue(2)
 
 	one, _ := queue.Dequeue()
-	if *one != val1 {
+	if one != 1 {
 		t.Error("Dequeue not returning correct element")
 	}
 
-	val3 := 3
-	queue.Enqueue(&val3)
+	queue.Enqueue(3)
 
 	two, _ := queue.Dequeue()
-	if *two != val2 {
+	if two != 2 {
 		t.Error("Dequeue not returning correct element")
 	}
 	three, _ := queue.Dequeue()
-	if *three != val3 {
+	if three != 3 {
 		t.Error("Dequeue not returning correct element")
 	}
 
