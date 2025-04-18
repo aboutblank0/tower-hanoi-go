@@ -5,7 +5,8 @@ import (
 )
 
 type HanoiGame struct {
-	Towers [3]*Tower
+	Towers    [3]*Tower
+	MovesMade int
 }
 
 func NewGame() *HanoiGame {
@@ -44,7 +45,12 @@ func (game *HanoiGame) Move(source int, destination int) bool {
 		panic(errors.New("Attempting to push into full tower"))
 	}
 
+	game.MovesMade++
 	return true
+}
+
+func (game *HanoiGame) IsComplete() bool {
+	return len(game.Towers[2].Discs) == TOWER_HEIGHT
 }
 
 func canMove(src Tower, dest Tower) bool {
