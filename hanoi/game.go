@@ -47,9 +47,12 @@ func (game *HanoiGame) Move(source int, destination int) bool {
 	return true
 }
 
-func canMove(source Tower, dest Tower) bool {
+func canMove(src Tower, dest Tower) bool {
+	if src.isEmpty() {
+		return false
+	}
 	if dest.isEmpty() {
 		return true
 	}
-	return dest.peek() > source.peek()
+	return dest.peek() > src.peek()
 }
