@@ -5,80 +5,59 @@ const DISC_MAX_WIDTH = TOWER_HEIGHT
 
 type Tower struct {
 	Height int
-	Discs  []*Disc
-}
-
-type Disc struct {
-	Width int
+	Discs  []int
 }
 
 func (t *Tower) hasSpace() bool {
-	for i := range len(t.Discs) {
-		if t.Discs[i] == nil {
-			return true
-		}
-	}
-	return false
+	return len(t.Discs) < cap(t.Discs)
 }
 
-func (t *Tower) peek() (d Disc, success bool) {
-	i := t.getTopDiscIndex()
-	if i == -1 {
-		return Disc{}, false
-	}
-	disc := t.Discs[i]
-	return *disc, true
+func (t *Tower) isEmpty() bool {
+	return len(t.Discs) == 0
 }
 
-func (t *Tower) pop() *Disc {
-	i := t.getTopDiscIndex()
-	if i == -1 {
-		return nil
+// Slightly different to the usual push, since I don't want to add more than the
+// original capacity. However, I still want to support multiple capacities (tower heights)
+func (t *Tower) push(disc int) bool {
+	if len(t.Discs) >= cap(t.Discs) {
+		return false
 	}
-	disc := t.Discs[i]
-	t.Discs[i] = nil
-	return disc
+	t.Discs = append(t.Discs, disc)
+	return true
 }
 
-func (t *Tower) push(disc *Disc) bool {
-	for i := len(t.Discs) - 1; i >= 0; i-- {
-		if t.Discs[i] == nil {
-			t.Discs[i] = disc
-			return true
-		}
-	}
-	return false
-}
-
-func (t *Tower) getTopDiscIndex() int {
-	for i := range t.Discs {
-		disc := t.Discs[i]
-		if disc != nil {
-			return i
-		}
+func (t *Tower) pop() (int, bool) {
+	if len(t.Discs) == 0 {
+		return -1, false
 	}
 
-	return -1
+	index := len(t.Discs) - 1
+	val := t.Discs[index]
+	t.Discs = t.Discs[:index]
+	return val, true
 }
 
+func (t *Tower) peek() int {
+	if (len(t.Discs) == 0) {
+		return 0
+	}
+	return t.Discs[len(t.Discs)-1]
+}
 
 func newInitialTower() *Tower {
 	tower := new(Tower)
 	tower.Height = TOWER_HEIGHT
-	tower.Discs = make([]*Disc, tower.Height)
+	tower.Discs = make([]int, 0, tower.Height)
 
-	for i := range tower.Height {
-		disc := new(Disc)
-		disc.Width = i + 1
-		tower.Discs[i] = disc
+	for i := tower.Height - 1; i >= 0; i-- {
+		tower.push(i + 1)
 	}
-
 	return tower
 }
 
 func newEmptyTower() *Tower {
 	tower := new(Tower)
 	tower.Height = TOWER_HEIGHT
-	tower.Discs = make([]*Disc, tower.Height)
+	tower.Discs = make([]int, 0, tower.Height)
 	return tower
 }

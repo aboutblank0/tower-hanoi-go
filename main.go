@@ -2,6 +2,8 @@ package main
 
 import (
 	"aboutblank0/hanoi/hanoi"
+	"fmt"
+	"runtime"
 )
 
 func main() {
@@ -25,4 +27,15 @@ func main() {
 	game.Move(0, 2)
 
 	hanoi.RenderHanoiGame(*game)
+
+}
+
+func printStats() {
+	var m runtime.MemStats
+	runtime.ReadMemStats(&m)
+
+	fmt.Printf("Alloc = %v KB\n", m.Alloc/1024)
+	fmt.Printf("TotalAlloc = %v KB\n", m.TotalAlloc/1024)
+	fmt.Printf("Sys = %v KB\n", m.Sys/1024)
+	fmt.Printf("NumGC = %v\n", m.NumGC)
 }

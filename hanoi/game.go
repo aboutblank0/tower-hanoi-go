@@ -1,5 +1,9 @@
 package hanoi
 
+import (
+	"errors"
+)
+
 type HanoiGame struct {
 	Towers [3]*Tower
 }
@@ -31,26 +35,21 @@ func (game *HanoiGame) Move(source int, destination int) bool {
 		return false
 	}
 
-	disc := srcTower.pop()
-	destTower.push(disc)
+	disc, success := srcTower.pop()
+	if !success {
+		panic(errors.New("Attempting to pop from an empty tower"))
+	}
+	success = destTower.push(disc)
+	if !success {
+		panic(errors.New("Attempting to push into full tower"))
+	}
+
 	return true
 }
 
 func canMove(source Tower, dest Tower) bool {
-	if !dest.hasSpace() {
-		return false
-	}
-
-	topDisc, success := dest.peek()
-	if !success {
+	if dest.isEmpty() {
 		return true
 	}
-
-	srcDisc, success := source.peek()
-	if !success {
-		return false
-	}
-
-	return topDisc.Width > srcDisc.Width
+	return dest.peek() > source.peek()
 }
-
