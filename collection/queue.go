@@ -7,7 +7,7 @@ import "errors"
 // But at least incrementing by a fixed "large" amount is decent enough for this project
 type Queue[T any] []T
 
-const GROW_INCREMENT = 100
+const GROW_INCREMENT = 1024
 
 func NewQueue[T any]() *Queue[T] {
 	queue := Queue[T](make([]T, 0, GROW_INCREMENT))
@@ -33,7 +33,7 @@ func (self *Queue[T]) IsEmpty() bool {
 	return len(*self) == 0
 }
 
-func (self *Queue[T]) growIfNeeded() (grew bool) {
+func (self *Queue[T]) growIfNeeded() {
 	queue := *self
 	//This check works because when you Dequeue an element,
 	//the capacity automatically shrinks
@@ -41,7 +41,5 @@ func (self *Queue[T]) growIfNeeded() (grew bool) {
 		newQueue := make([]T, len(queue), cap(queue)+GROW_INCREMENT)
 		copy(newQueue, queue)
 		*self = newQueue
-		return true
 	}
-	return false
 }

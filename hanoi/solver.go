@@ -3,22 +3,32 @@ package hanoi
 import (
 	"aboutblank0/hanoi/collection"
 	"fmt"
+	"time"
 )
 
+type Move struct {
+	From int
+	To   int
+}
+
+//TODO: Instead of cloning/storing different game states, have just one and mutate it around
 func BFS(game *HanoiGame) {
 	queue := collection.NewQueue[*HanoiGame]()
-	visited := map[string]bool{}
+	visited := make(map[uint64]bool, 1024)
+
+	startTime := time.Now()
+	counter := 1
 
 	start := game.Clone()
 	startKey := start.Serialize()
 	visited[startKey] = true
 	queue.Enqueue(start)
-
 	for !queue.IsEmpty() {
 		current, _ := queue.Dequeue()
+		counter++
 
 		if current.IsComplete() {
-			fmt.Printf("Complete in %v moves!\n", current.MovesMade)
+			fmt.Printf("Complete in %v moves!\nTime taken: %s\nBranches explored: %v\n", current.MovesMade, time.Since(startTime), counter)
 			return
 		}
 
@@ -37,12 +47,9 @@ func BFS(game *HanoiGame) {
 	}
 }
 
-type Move struct {
-	From int
-	To   int
-}
+var moves = make([]Move, 0, 6)
 func GetAllPossibleMoves(game HanoiGame) []Move {
-	moves := make([]Move, 0, 3)
+	moves = moves[:0]
 	for i, tower := range game.Towers {
 		if tower.isEmpty() {
 			continue

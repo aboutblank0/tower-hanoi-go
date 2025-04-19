@@ -10,7 +10,7 @@ import (
 	"time"
 )
 
-func eraseScreen()    { fmt.Print("\033[2J") } //Erase Screen
+func eraseScreen()    { fmt.Print("\033[2J") }
 func moveCursorHome() { fmt.Print("\033[H") }
 
 func main() {

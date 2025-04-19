@@ -2,8 +2,6 @@ package hanoi
 
 import (
 	"errors"
-	"strconv"
-	"strings"
 )
 
 type HanoiGame struct {
@@ -68,26 +66,25 @@ func (game HanoiGame) IsComplete() bool {
 }
 
 func (game *HanoiGame) Clone() *HanoiGame {
-	towers := [3]*Tower {
+	towers := [3]*Tower{
 		game.Towers[0].Clone(),
 		game.Towers[1].Clone(),
 		game.Towers[2].Clone(),
 	}
 
 	return &HanoiGame{
-		Towers: towers,
+		Towers:    towers,
 		MovesMade: game.MovesMade,
 	}
 }
 
-func (game *HanoiGame) Serialize() string {
-	var b strings.Builder
-	for _, tower := range game.Towers {
-		for i := len(tower.Discs) - 1; i >= 0; i-- {
-			b.WriteString(strconv.Itoa(tower.Discs[i]))
-			b.WriteString("-")
+func (game *HanoiGame) Serialize() uint64 {
+	var key uint64
+	for towerIndex, tower := range game.Towers {
+		for _, disc := range tower.Discs {
+			shift := disc * 2
+			key |= uint64(towerIndex) << shift
 		}
-		b.WriteString("|")
 	}
-	return b.String()
+	return key
 }

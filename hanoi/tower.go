@@ -1,15 +1,10 @@
 package hanoi
 
-const TOWER_HEIGHT = 15
+const TOWER_HEIGHT = 16		//MAXIMUM IS 32 For solver to work
 const DISC_MAX_WIDTH = TOWER_HEIGHT
 
 type Tower struct {
-	Height int
 	Discs  []int
-}
-
-func (t Tower) hasSpace() bool {
-	return len(t.Discs) < cap(t.Discs)
 }
 
 func (t Tower) isEmpty() bool {
@@ -19,7 +14,7 @@ func (t Tower) isEmpty() bool {
 // Slightly different to the usual push, since I don't want to add more than the
 // original capacity. However, I still want to support multiple capacities (tower heights)
 func (t *Tower) push(disc int) bool {
-	if len(t.Discs) >= cap(t.Discs) {
+	if len(t.Discs) == cap(t.Discs) {
 		return false
 	}
 	t.Discs = append(t.Discs, disc)
@@ -46,10 +41,9 @@ func (t *Tower) peek() int {
 
 func newInitialTower() *Tower {
 	tower := new(Tower)
-	tower.Height = TOWER_HEIGHT
-	tower.Discs = make([]int, 0, tower.Height)
+	tower.Discs = make([]int, 0, TOWER_HEIGHT)
 
-	for i := tower.Height - 1; i >= 0; i-- {
+	for i := TOWER_HEIGHT - 1; i >= 0; i-- {
 		tower.push(i + 1)
 	}
 	return tower
@@ -57,8 +51,7 @@ func newInitialTower() *Tower {
 
 func newEmptyTower() *Tower {
 	tower := new(Tower)
-	tower.Height = TOWER_HEIGHT
-	tower.Discs = make([]int, 0, tower.Height)
+	tower.Discs = make([]int, 0, TOWER_HEIGHT)
 	return tower
 }
 
@@ -67,7 +60,6 @@ func (t *Tower) Clone() *Tower {
 	copy(discs, t.Discs)
 
 	return &Tower{
-		Height: t.Height,
 		Discs: discs,
 	}
 }
