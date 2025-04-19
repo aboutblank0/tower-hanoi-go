@@ -2,6 +2,9 @@
 
 This is a simple Tower of Hanoi game written in Go, featuring an efficient **Breadth-First Search (BFS)** solver.
 
+![alacritty_SqsGt2J17B](https://github.com/user-attachments/assets/91974540-afc1-4d69-8ddf-89af21b6a225)
+
+
 ## Features
 
 - Solves the Tower of Hanoi puzzle using BFS
