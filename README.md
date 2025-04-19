@@ -13,7 +13,7 @@ This is a simple Tower of Hanoi game written in Go, featuring an efficient **Bre
 
 ## Purpose
 
-The goal of this project was to implement and optimize a BFS-based solver for the Tower of Hanoi problem, focusing on performance and clarity.
+The goal of this project was to implement and optimize a BFS-based solver for the Tower of Hanoi problem, focusing on performance and clarity. All of course just for fun/learning.
 
 ## Usage
 
