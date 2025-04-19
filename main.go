@@ -4,7 +4,6 @@ import (
 	"aboutblank0/hanoi/hanoi"
 	"bufio"
 	"fmt"
-	"math/rand"
 	"os"
 	"runtime"
 	"time"
@@ -15,38 +14,25 @@ func moveCursorHome() { fmt.Print("\033[H") }
 
 func main() {
 	game := hanoi.NewGame()
-	hanoi.BFS(game)
-	printStats()
+	moves := hanoi.BFS(game)
+	replayMoves(game, moves)
+	// printStats()
 }
 
-func getRandInt(exclude int) int {
-	for {
-		r := rand.Intn(3)
-		if r != exclude {
-			return r
-		}
-	}
-}
-
-func randomGameLoop(g *hanoi.HanoiGame) {
+func replayMoves(g *hanoi.HanoiGame, moves []hanoi.Move) {
 	game := *g
 	eraseScreen()
-	for {
-		rSrc := getRandInt(-1)
-		rDest := getRandInt(rSrc)
-
-		if !game.Move(rSrc, rDest) {
+	for _, move := range moves {
+		if !game.Move(move.From, move.To) {
+			fmt.Println("Skipping Move")
 			continue
 		}
 		moveCursorHome()
 		hanoi.RenderHanoiGame(game)
 
-		if game.IsComplete() {
-			fmt.Printf("You won win %v moves.\n", game.MovesMade)
-			break
-		}
-		time.Sleep(time.Millisecond * 5)
+		time.Sleep(time.Millisecond * 10)
 	}
+	fmt.Printf("You won in %v moves.\n", game.MovesMade)
 }
 
 func readGameLoop(game *hanoi.HanoiGame) {

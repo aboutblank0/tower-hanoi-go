@@ -11,33 +11,41 @@ type Move struct {
 	To   int
 }
 
-//TODO: Instead of cloning/storing different game states, have just one and mutate it around
-func BFS(game *HanoiGame) {
-	queue := collection.NewQueue[*HanoiGame]()
+func (m Move) invert() Move { return Move{From: m.To, To: m.From} }
+
+type State struct {
+	Game   *HanoiGame
+	Parent *State
+	Move   Move
+}
+
+// TODO: Instead of cloning/storing different game states, have just one and mutate it around
+func BFS(game *HanoiGame) []Move {
+	queue := collection.NewQueue[*State]()
 	visited := make(map[uint64]bool, 1024)
 
 	startTime := time.Now()
 	counter := 1
 
-	start := game.Clone()
-	startKey := start.Serialize()
+	startState := &State{Game: game.Clone()}
+	startKey := startState.Game.Serialize()
 	visited[startKey] = true
-	queue.Enqueue(start)
+	queue.Enqueue(startState)
 	for !queue.IsEmpty() {
 		current, _ := queue.Dequeue()
 		counter++
 
-		if current.IsComplete() {
-			fmt.Printf("Complete in %v moves!\nTime taken: %s\nBranches explored: %v\n", current.MovesMade, time.Since(startTime), counter)
-			return
+		if current.Game.IsComplete() {
+			fmt.Printf("Complete in %v moves!\nTime taken: %s\nBranches explored: %v\n", current.Game.MovesMade, time.Since(startTime), counter)
+			return retraceMoves(*current)
 		}
 
-		moves := GetAllPossibleMoves(*current)
+		moves := getAllPossibleMoves(*current.Game)
 		for _, move := range moves {
-			next := current.Clone()
-			next.Move(move.From, move.To)
+			next := &State{Game: current.Game.Clone(), Parent: current, Move: move}
+			next.Game.Move(move.From, move.To)
 
-			key := next.Serialize()
+			key := next.Game.Serialize()
 			if !visited[key] {
 				visited[key] = true
 
@@ -45,10 +53,13 @@ func BFS(game *HanoiGame) {
 			}
 		}
 	}
+
+	return nil
 }
 
 var moves = make([]Move, 0, 6)
-func GetAllPossibleMoves(game HanoiGame) []Move {
+
+func getAllPossibleMoves(game HanoiGame) []Move {
 	moves = moves[:0]
 	for i, tower := range game.Towers {
 		if tower.isEmpty() {
@@ -64,4 +75,20 @@ func GetAllPossibleMoves(game HanoiGame) []Move {
 		}
 	}
 	return moves
+}
+
+func retraceMoves(state State) []Move {
+	moves := make([]Move, 0, 8)
+
+	for cur := &state; cur.Parent != nil; cur = cur.Parent {
+		moves = append(moves, cur.Move)
+	}
+	return reverse(moves)
+}
+
+func reverse(m []Move) []Move {
+	for i, j := 0, len(m)-1; i < j; i, j = i+1, j-1 {
+		m[i], m[j] = m[j], m[i]
+	}
+	return m
 }

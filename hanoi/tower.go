@@ -1,6 +1,6 @@
 package hanoi
 
-const TOWER_HEIGHT = 16		//MAXIMUM IS 32 For solver to work
+const TOWER_HEIGHT = 10		//MAXIMUM IS 32 For solver to work
 const DISC_MAX_WIDTH = TOWER_HEIGHT
 
 type Tower struct {
