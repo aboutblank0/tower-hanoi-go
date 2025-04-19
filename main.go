@@ -15,7 +15,8 @@ func moveCursorHome() { fmt.Print("\033[H") }
 
 func main() {
 	game := hanoi.NewGame()
-	readGameLoop(game)
+	hanoi.BFS(game)
+	printStats()
 }
 
 func getRandInt(exclude int) int {

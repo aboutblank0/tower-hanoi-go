@@ -2,6 +2,8 @@ package hanoi
 
 import (
 	"errors"
+	"strconv"
+	"strings"
 )
 
 type HanoiGame struct {
@@ -21,20 +23,13 @@ func NewGame() *HanoiGame {
 // Moving logic in tower of hanoi is very simple.
 // Since the top disc always gets moved, we just need to know
 // the source and destination TOWERs (their index)
-func (game *HanoiGame) Move(source int, destination int) bool {
-	if source == destination {
+func (game *HanoiGame) Move(src int, dest int) bool {
+	if !game.CanMove(src, dest) {
 		return false
 	}
 
-	if source >= len(game.Towers) || destination >= len(game.Towers) {
-		return false
-	}
-
-	srcTower := game.Towers[source]
-	destTower := game.Towers[destination]
-	if !canMove(*srcTower, *destTower) {
-		return false
-	}
+	srcTower := game.Towers[src]
+	destTower := game.Towers[dest]
 
 	disc, success := srcTower.pop()
 	if !success {
@@ -49,16 +44,50 @@ func (game *HanoiGame) Move(source int, destination int) bool {
 	return true
 }
 
-func (game *HanoiGame) IsComplete() bool {
+func (game *HanoiGame) CanMove(src int, dest int) bool {
+	if src == dest {
+		return false
+	}
+	if src >= len(game.Towers) || dest >= len(game.Towers) {
+		return false
+	}
+
+	srcTower := game.Towers[src]
+	if srcTower.isEmpty() {
+		return false
+	}
+	destTower := game.Towers[dest]
+	if destTower.isEmpty() {
+		return true
+	}
+	return destTower.peek() > srcTower.peek()
+}
+
+func (game HanoiGame) IsComplete() bool {
 	return len(game.Towers[2].Discs) == TOWER_HEIGHT
 }
 
-func canMove(src Tower, dest Tower) bool {
-	if src.isEmpty() {
-		return false
+func (game *HanoiGame) Clone() *HanoiGame {
+	towers := [3]*Tower {
+		game.Towers[0].Clone(),
+		game.Towers[1].Clone(),
+		game.Towers[2].Clone(),
 	}
-	if dest.isEmpty() {
-		return true
+
+	return &HanoiGame{
+		Towers: towers,
+		MovesMade: game.MovesMade,
 	}
-	return dest.peek() > src.peek()
+}
+
+func (game *HanoiGame) Serialize() string {
+	var b strings.Builder
+	for _, tower := range game.Towers {
+		for i := len(tower.Discs) - 1; i >= 0; i-- {
+			b.WriteString(strconv.Itoa(tower.Discs[i]))
+			b.WriteString("-")
+		}
+		b.WriteString("|")
+	}
+	return b.String()
 }
